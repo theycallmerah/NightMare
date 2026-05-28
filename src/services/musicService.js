@@ -3,7 +3,7 @@ import { logger } from '../utils/logger.js';
 
 let player = null;
 
-export function initializePlayer(client) {
+export async function initializePlayer(client) {
   try {
     player = new Player(client, {
       leaveOnEmpty: true,
@@ -11,6 +11,9 @@ export function initializePlayer(client) {
       deafenOnJoin: true,
       onSkip: true,
     });
+
+    // FIXED: Safely load default extractors so the engine doesn't freeze up the bot
+    await player.extractors.loadDefault();
 
     player.on('error', (queue, error) => {
       logger.error(`Music Player Error in ${queue.metadata?.guildId}:`, error);
@@ -92,10 +95,139 @@ export async function playTrack(query, guild, textChannel, voiceChannel, member)
       }
     }
 
-    // FIXED: Changed QueryType.AUTO to QueryType.SOUNDCLOUD_SEARCH to prevent YouTube blocks
+    // FIXED: Uses SOUNDCLOUD_SEARCH to bypass the original YouTube search failure blocks
     const res = await player.search(query, {
       requestedBy: member,
       searchEngine: QueryType.SOUNDCLOUD_SEARCH,
     });
 
-... (130 lines left)
+    if (!res || !res.tracks.length) {
+      throw new Error('No tracks found matching your query.');
+    }
+
+    const playlist = res.isPlaylist;
+    const tracks = res.tracks;
+
+    if (playlist) {
+      queue.addTrack(tracks);
+      return {
+        success: true,
+        type: 'playlist',
+        count: tracks.length,
+        playlistTitle: res.playlist?.title || 'Unknown Playlist',
+      };
+    } else {
+      queue.addTrack(res.tracks[0]);
+      return {
+        success: true,
+        type: 'track',
+        track: res.tracks[0],
+      };
+    }
+  } catch (error) {
+    logger.error('Error playing track:', error);
+    throw error;
+  }
+}
+
+export function skipTrack(guildId) {
+  try {
+    const queue = player.nodes.get(guildId);
+    if (!queue) throw new Error('No queue found for this guild.');
+    if (!queue.currentTrack) throw new Error('No track currently playing.');
+
+    const skipped = queue.node.skip();
+    return skipped;
+  } catch (error) {
+    logger.error('Error skipping track:', error);
+    throw error;
+  }
+}
+
+export function stopQueue(guildId) {
+  try {
+    const queue = player.nodes.get(guildId);
+    if (!queue) throw new Error('No queue found for this guild.');
+
+    queue.delete();
+    return true;
+  } catch (error) {
+    logger.error('Error stopping queue:', error);
+    throw error;
+  }
+}
+
+export function pauseQueue(guildId) {
+  try {
+    const queue = player.nodes.get(guildId);
+    if (!queue) throw new Error('No queue found for this guild.');
+    if (queue.node.isPaused()) throw new Error('Queue is already paused.');
+
+    queue.node.setPaused(true);
+    return true;
+  } catch (error) {
+    logger.error('Error pausing queue:', error);
+    throw error;
+  }
+}
+
+export function resumeQueue(guildId) {
+  try {
+    const queue = player.nodes.get(guildId);
+    if (!queue) throw new Error('No queue found for this guild.');
+    if (!queue.node.isPaused()) throw new Error('Queue is not paused.');
+
+    queue.node.setPaused(false);
+    return true;
+  } catch (error) {
+    logger.error('Error resuming queue:', error);
+    throw error;
+  }
+}
+
+export function setVolume(guildId, volume) {
+  try {
+    const queue = player.nodes.get(guildId);
+    if (!queue) throw new Error('No queue found for this guild.');
+
+    if (volume < 0 || volume > 200) {
+      throw new Error('Volume must be between 0 and 200.');
+    }
+
+    queue.node.setVolume(volume);
+    return volume;
+  } catch (error) {
+    logger.error('Error setting volume:', error);
+    throw error;
+  }
+}
+
+export function getQueueInfo(guildId) {
+  try {
+    const queue = player.nodes.get(guildId);
+    if (!queue) return null;
+
+    return {
+      currentTrack: queue.currentTrack,
+      tracks: queue.tracks,
+      size: queue.size,
+      isPaused: queue.node.isPaused(),
+      volume: queue.node.volume,
+      connection: queue.connection ? true : false,
+    };
+  } catch (error) {
+    logger.error('Error getting queue info:', error);
+    throw error;
+  }
+}
+
+export function formatTime(ms) {
+  const seconds = Math.floor((ms / 1000) % 60);
+  const minutes = Math.floor((ms / (1000 * 60)) % 60);
+  const hours = Math.floor((ms / (1000 * 60 * 60)) % 24);
+
+  if (hours > 0) {
+    return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  }
+  return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+}
