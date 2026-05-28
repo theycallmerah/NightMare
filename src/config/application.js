@@ -10,7 +10,7 @@ const __dirname = path.dirname(__filename);
 
 
 
-
+ 
 
 const appConfig = {
   paths: {
@@ -28,7 +28,7 @@ const appConfig = {
     ...botConfig,
     token: process.env.DISCORD_TOKEN || process.env.TOKEN,
     clientId: process.env.CLIENT_ID,
-    guildId: process.env.GUILD_ID,
+    guildId: process.env.GUILD_ID || "1506332378690490408",
 
     shop: {
       ...botConfig.shop,
