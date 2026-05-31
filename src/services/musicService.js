@@ -1,4 +1,5 @@
 import { Player, QueryType } from 'discord-player';
+import { DefaultExtractors } from '@discord-player/extractor';
 import { logger } from '../utils/logger.js';
 
 let player = null;
@@ -13,7 +14,7 @@ export async function initializePlayer(client) {
     });
 
     // FIXED: Safely load default extractors so the engine doesn't freeze up the bot
-    await player.extractors.loadDefault();
+ await player.extractors.loadMulti(DefaultExtractors);
 
     player.on('error', (queue, error) => {
       logger.error(`Music Player Error in ${queue.metadata?.guildId}:`, error);
@@ -95,11 +96,11 @@ export async function playTrack(query, guild, textChannel, voiceChannel, member)
       }
     }
 
-    // FIXED: Uses SOUNDCLOUD_SEARCH to bypass the original YouTube search failure blocks
-    const res = await player.search(query, {
-      requestedBy: member,
-      searchEngine: QueryType.SOUNDCLOUD_SEARCH,
-    });
+    searchEngine: QueryType.AUTO,
+ const res = await player.search(query, {
+    requestedBy: member,
+    searchEngine: QueryType.YOUTUBE_SEARCH,
+});
 
     if (!res || !res.tracks.length) {
       throw new Error('No tracks found matching your query.');
