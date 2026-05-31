@@ -46,7 +46,7 @@ export async function playTrack(query, guild, textChannel, voiceChannel, member)
       });
     }
     if (!queue.connection) await queue.connect(voiceChannel);
-    const res = await player.search(query, { requestedBy: member, searchEngine: QueryType.SOUNDCLOUD_SEARCH });
+    const res = await player.search(query, { requestedBy: member, searchEngine: QueryType.SPOTIFY_SEARCH });
     if (!res || !res.tracks.length) throw new Error('No tracks found matching your query.');
     if (res.isPlaylist) {
       queue.addTrack(res.tracks);
