@@ -11,7 +11,12 @@ export async function initializePlayer(client) {
       leaveOnEmptyCooldown: 300000,
       deafenOnJoin: true,
     });
-    await player.extractors.loadMulti(DefaultExtractors);
+    await player.extractors.loadMulti(DefaultExtractors, {
+  SpotifyExtractor: {
+    clientId: process.env.SPOTIFY_CLIENT_ID,
+    clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
+  }
+});
     player.on('trackStart', (queue, track) => {
       const channel = queue.metadata?.textChannel;
       if (channel) {
