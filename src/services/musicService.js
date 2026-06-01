@@ -12,7 +12,6 @@ export async function initializePlayer(client) {
       selfDeaf: true,
     });
 
-    import { DefaultExtractors } from '@discord-player/extractor';
 await player.extractors.loadMulti(DefaultExtractors);
 
     player.events.on('playerStart', (queue, track) => {
