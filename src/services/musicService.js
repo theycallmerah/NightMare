@@ -1,4 +1,5 @@
 import { Player, QueryType } from 'discord-player';
+import { DefaultExtractors } from '@discord-player/extractor';
 import { logger } from '../utils/logger.js';
 
 let player = null;
