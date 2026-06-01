@@ -54,10 +54,9 @@ async function handleLeveling(message, client) {
 async function handleAutoRespond(message) {
   try {
     const response = checkAutoRespond(message.guild.id, message.content.trim());
-    logger.info(`Auto respond check: guild=${message.guild.id} trigger="${message.content.trim()}" found=${!!response}`);
     if (response) {
       await message.delete().catch(() => {});
-      await message.channel.send({ content: response, allowedMentions: { parse: ['everyone', 'here'] } })
+      await message.channel.send({ content: response, allowedMentions: { parse: ['everyone'] } })
         .catch(err => logger.error('Failed to send auto respond:', err));
     }
   } catch (error) {
