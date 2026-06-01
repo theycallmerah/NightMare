@@ -10,15 +10,7 @@ player = new Player(client, {
     leaveOnEmpty: true,
     leaveOnEmptyCooldown: 300000,
     selfDeaf: true,
-    ytdlOptions: {
-        requestOptions: {
-            headers: {
-                cookie: process.env.YT_COOKIE || '',
-            }
-        }
-    }
 });
-
 await player.extractors.loadMulti(DefaultExtractors, {
     YoutubeiExtractor: {
         authentication: process.env.YT_COOKIE || '',
