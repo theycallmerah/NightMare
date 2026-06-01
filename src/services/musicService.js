@@ -11,7 +11,8 @@ export async function initializePlayer(client) {
       selfDeaf: true,
     });
 
-    await player.extractors.loadDefault();
+    import { DefaultExtractors } from '@discord-player/extractor';
+await player.extractors.loadMulti(DefaultExtractors);
 
     player.events.on('playerStart', (queue, track) => {
       const channel = queue.metadata?.textChannel;
