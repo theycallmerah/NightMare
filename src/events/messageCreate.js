@@ -56,7 +56,7 @@ async function handleAutoRespond(message) {
     const response = checkAutoRespond(message.guild.id, message.content.trim());
     if (response) {
       await message.delete().catch(() => {});
-      await message.channel.send(response);
+      await message.channel.send({ content: response, allowedMentions: { parse: ['everyone', 'here'] } });
     }
   } catch (error) {
     logger.error('Error in auto respond:', error);
