@@ -4,18 +4,12 @@ import { logger } from '../utils/logger.js';
 
 let player = null;
 
-export async function initializePlayer(client) {
-  try {
-    player = new Player(client, {
-      leaveOnEmpty: true,
-      leaveOnEmptyCooldown: 300000,
-      deafenOnJoin: true,
-    });
-    await player.extractors.loadMulti(DefaultExtractors, {
-  SpotifyExtractor: {
-    clientId: process.env.SPOTIFY_CLIENT_ID,
-    clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
-  }
+queue = player.nodes.create(guild.id, {
+    metadata: { guildId: guild.id, textChannel, voiceChannel },
+    leaveOnEmpty: true,
+    leaveOnEmptyCooldown: 300000,
+    selfDeaf: true,
+    bufferingTimeout: 3000,
 });
     player.on('trackStart', (queue, track) => {
       const channel = queue.metadata?.textChannel;
