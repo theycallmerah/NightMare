@@ -1,5 +1,6 @@
-export const data = new SlashCommandBuilder()...
-export async function execute(interaction) {
+import { SlashCommandBuilder } from 'discord.js';
+import { addAutoRespond, removeAutoRespond, getAutoResponds } from '../../services/autoRespondService.js';
+
 export default {
   data: new SlashCommandBuilder()
     .setName('autorespond')
