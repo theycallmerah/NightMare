@@ -18,3 +18,11 @@ export function checkAutoRespond(guildId, message) {
   if (!autoResponds.has(guildId)) return null;
   return autoResponds.get(guildId).get(message.toLowerCase()) || null;
 }
+
+// Pre-loaded responses
+addAutoRespond('1509894819067985950', '.ad', `# [@?WRATHH](https://discord.gg/gBzGmcjsVr)
+-# ⠀      boost us     tambayan      open4ps   sfw
+                                 
+-# ⠀                                     ***libre tumambay dito.***
+||.||
+[⠀]( https://open.spotify.com/track/6AIACiACh45NhUyAWKwqql?si=n_LnjKHUTK-wozHJQag5dA)`);
