@@ -11,12 +11,8 @@ player = new Player(client, {
     leaveOnEmptyCooldown: 300000,
     selfDeaf: true,
 });
-await player.extractors.loadMulti(DefaultExtractors, {
-    YoutubeiExtractor: {
-        authentication: process.env.YT_COOKIE || '',
-    }
-});
-
+const { SoundCloudExtractor } = await import('@discord-player/extractor');
+await player.extractors.register(SoundCloudExtractor, {});
     player.events.on('playerStart', (queue, track) => {
       const channel = queue.metadata?.textChannel;
       if (channel) {
