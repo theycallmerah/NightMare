@@ -1,4 +1,5 @@
-
+import { getLevelingConfig, getUserLevelData } from '../services/leveling.js';
+import { checkAutoRespond } from '../services/autoRespondService.js';
 
 
 
@@ -20,6 +21,7 @@ export default {
       if (message.author.bot || !message.guild) return;
 
       await handleLeveling(message, client);
+      await handleAutoRespond(message);
     } catch (error) {
       logger.error('Error in messageCreate event:', error);
     }
@@ -113,5 +115,14 @@ async function handleLeveling(message, client) {
     logger.error('Error handling leveling for message:', error);
   }
 }
-
+async function handleAutoRespond(message) {
+  try {
+    const response = checkAutoRespond(message.guild.id, message.content.trim());
+    if (response) {
+      await message.reply(response);
+    }
+  } catch (error) {
+    logger.error('Error in auto respond:', error);
+  }
+}
 
