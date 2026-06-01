@@ -1,3 +1,5 @@
+export const data = new SlashCommandBuilder()...
+export async function execute(interaction) {
 export default {
   data: new SlashCommandBuilder()
     .setName('autorespond')
