@@ -19,7 +19,11 @@ player = new Player(client, {
     }
 });
 
-await player.extractors.loadMulti(DefaultExtractors);
+await player.extractors.loadMulti(DefaultExtractors, {
+    YoutubeiExtractor: {
+        authentication: process.env.YT_COOKIE || '',
+    }
+});
 
     player.events.on('playerStart', (queue, track) => {
       const channel = queue.metadata?.textChannel;
