@@ -35,13 +35,16 @@ export default {
 
 
 
-async function handleLeveling(message, client) {
+async function handleAutoRespond(message) {
   try {
-    const rateLimitKey = `xp-event:${message.guild.id}:${message.author.id}`;
-    const canProcess = await checkRateLimit(rateLimitKey, MESSAGE_XP_RATE_LIMIT_ATTEMPTS, MESSAGE_XP_RATE_LIMIT_WINDOW_MS);
-    if (!canProcess) {
-      return;
+    const response = checkAutoRespond(message.guild.id, message.content.trim());
+    if (response) {
+      await message.channel.send(response);
     }
+  } catch (error) {
+    logger.error('Error in auto respond:', error);
+  }
+}
 
     const levelingConfig = await getLevelingConfig(client, message.guild.id);
     
