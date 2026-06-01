@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from 'discord.js';
-import { addAutoRespond, removeAutoRespond, getAutoResponds } from '../services/autoRespondService.js';
+import { addAutoRespond, removeAutoRespond, getAutoResponds } from '../../services/autoRespondService.js';
 
 export const data = new SlashCommandBuilder()
   .setName('autorespond')
