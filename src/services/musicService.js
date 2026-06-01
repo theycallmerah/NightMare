@@ -6,11 +6,18 @@ let player = null;
 
 export async function initializePlayer(client) {
   try {
-    player = new Player(client, {
-      leaveOnEmpty: true,
-      leaveOnEmptyCooldown: 300000,
-      selfDeaf: true,
-    });
+player = new Player(client, {
+    leaveOnEmpty: true,
+    leaveOnEmptyCooldown: 300000,
+    selfDeaf: true,
+    ytdlOptions: {
+        requestOptions: {
+            headers: {
+                cookie: process.env.YT_COOKIE || '',
+            }
+        }
+    }
+});
 
 await player.extractors.loadMulti(DefaultExtractors);
 
